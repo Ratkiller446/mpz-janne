@@ -12,6 +12,7 @@
 #include <QUrl>
 #include <QFont>
 #include <QPalette>
+#include <QDockWidget>
 
 namespace CoverArt {
   Widget::Widget(QWidget *parent) : QLabel(parent) {
@@ -116,9 +117,10 @@ namespace CoverArt {
     QAction fit(tr("Fit"), zoomMenu);
     QAction z100(tr("100%"), zoomMenu);
     QAction z200(tr("200%"), zoomMenu);
-    connect(&fit, &QAction::triggered, this, [this]() { _zoom = 1.0; render(); });
-    connect(&z100, &QAction::triggered, this, [this]() { _zoom = 1.0; render(); });
-    connect(&z200, &QAction::triggered, this, [this]() { _zoom = 2.0; render(); });
+    auto applyZoom = [this](double z){ _zoom = z; updateGeometry(); render(); };
+    connect(&fit, &QAction::triggered, this, [applyZoom]() { applyZoom(1.0); });
+    connect(&z100, &QAction::triggered, this, [applyZoom]() { applyZoom(1.0); });
+    connect(&z200, &QAction::triggered, this, [applyZoom]() { applyZoom(2.0); });
     zoomMenu->addAction(&fit);
     zoomMenu->addAction(&z100);
     zoomMenu->addAction(&z200);
@@ -141,9 +143,19 @@ namespace CoverArt {
       QLabel::wheelEvent(event);
       return;
     }
-    // ponytail: wheel zoom, clamp 0.2-4x
+    // ponytail: wheel zoom, clamp 0.2-4x, expand dock
     const double step = event->angleDelta().y() > 0 ? 1.1 : 0.9;
     _zoom = qBound(0.2, _zoom * step, 4.0);
+    updateGeometry();
+    // find dock (widget is inside dock)
+    QWidget *p = parentWidget();
+    QDockWidget *dock = qobject_cast<QDockWidget*>(p);
+    if (!dock && p) dock = qobject_cast<QDockWidget*>(p->parentWidget());
+    if (dock) {
+      // expand dock, keep aspect
+      QSize cur = dock->size();
+      dock->resize(int(cur.width() * step), int(cur.height() * step));
+    }
     render();
     event->accept();
   }
@@ -151,6 +163,7 @@ namespace CoverArt {
   void Widget::mouseDoubleClickEvent(QMouseEvent *event) {
     if (!source.isNull() && event->button() == Qt::LeftButton) {
       _zoom = 1.0;
+      updateGeometry();
       render();
       event->accept();
       return;
@@ -158,14 +171,24 @@ namespace CoverArt {
     QLabel::mouseDoubleClickEvent(event);
   }
 
+  QSize Widget::sizeHint() const {
+    if (source.isNull()) return QLabel::sizeHint();
+    // ponytail: hint grows with zoom so dock expands
+    QSize base = source.size();
+    // cap to 600px base, then scale by zoom
+    base = base.scaled(400, 400, Qt::KeepAspectRatio);
+    return QSize(int(base.width() * _zoom), int(base.height() * _zoom));
+  }
+
+  QSize Widget::minimumSizeHint() const {
+    return QSize(80, 80);
+  }
+
   void Widget::render() {
     if (source.isNull()) {
       return;
     }
-    // ponytail: zoom scales the available size
-    QSize target(int(width() * _zoom), int(height() * _zoom));
-    if (target.width() < 1) target.setWidth(1);
-    if (target.height() < 1) target.setHeight(1);
-    setPixmap(source.scaled(target, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    // ponytail: fit to current widget size (which now grows with zoom via sizeHint)
+    setPixmap(source.scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
   }
 }

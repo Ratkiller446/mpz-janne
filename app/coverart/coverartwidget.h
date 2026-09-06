@@ -24,6 +24,8 @@ namespace CoverArt {
     void resizeEvent(QResizeEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;
+    QSize sizeHint() const override;
+    QSize minimumSizeHint() const override;
 
   private slots:
     void showContextMenu(const QPoint &pos);
