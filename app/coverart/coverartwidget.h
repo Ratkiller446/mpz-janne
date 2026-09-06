@@ -22,6 +22,8 @@ namespace CoverArt {
 
   protected:
     void resizeEvent(QResizeEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
 
   private slots:
     void showContextMenu(const QPoint &pos);
@@ -37,6 +39,7 @@ namespace CoverArt {
     QPixmap source;
     Track _track;
     QString _cover_path;
+    double _zoom = 1.0; // ponytail: wheel zoom, double-click resets; clamp 0.2-4x
   };
 }
 

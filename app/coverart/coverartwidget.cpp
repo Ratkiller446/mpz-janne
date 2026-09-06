@@ -4,6 +4,8 @@
 #include "icons.h"
 
 #include <QResizeEvent>
+#include <QWheelEvent>
+#include <QMouseEvent>
 #include <QMenu>
 #include <QAction>
 #include <QDesktopServices>
@@ -16,6 +18,7 @@ namespace CoverArt {
     setAlignment(Qt::AlignCenter);
     setWordWrap(true);
     setMinimumSize(80, 80);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     // muted, small placeholder text (not the cover pixmap)
     setForegroundRole(QPalette::PlaceholderText);
     QFont f = font();
@@ -66,6 +69,7 @@ namespace CoverArt {
     if (path.isEmpty() || cover.isNull()) {
       _cover_path.clear();
       source = QPixmap();
+      _zoom = 1.0;
       // request() may not have run yet, so ask rather than assume.
       const bool searching = Online::Downloader::instance().isSearching(_track.artist(), _track.album());
       setText(searching ? tr("Searching cover art...") : tr("No cover art"));
@@ -73,6 +77,7 @@ namespace CoverArt {
     }
     _cover_path = path;
     source = cover;
+    _zoom = 1.0;
     render();
   }
 
@@ -80,6 +85,7 @@ namespace CoverArt {
     _track = Track();
     _cover_path.clear();
     source = QPixmap();
+    _zoom = 1.0;
     setText(tr("Nothing playing"));
   }
 
@@ -105,8 +111,21 @@ namespace CoverArt {
       emit trackInfoRequested(_track);
     });
 
+    // ponytail: minimal zoom controls
+    QMenu *zoomMenu = menu.addMenu(tr("Zoom"));
+    QAction fit(tr("Fit"), zoomMenu);
+    QAction z100(tr("100%"), zoomMenu);
+    QAction z200(tr("200%"), zoomMenu);
+    connect(&fit, &QAction::triggered, this, [this]() { _zoom = 1.0; render(); });
+    connect(&z100, &QAction::triggered, this, [this]() { _zoom = 1.0; render(); });
+    connect(&z200, &QAction::triggered, this, [this]() { _zoom = 2.0; render(); });
+    zoomMenu->addAction(&fit);
+    zoomMenu->addAction(&z100);
+    zoomMenu->addAction(&z200);
+
     menu.addAction(&viewer);
     menu.addAction(&info);
+    menu.addMenu(zoomMenu);
     menu.exec(mapToGlobal(pos));
   }
 
@@ -117,10 +136,36 @@ namespace CoverArt {
     }
   }
 
+  void Widget::wheelEvent(QWheelEvent *event) {
+    if (source.isNull()) {
+      QLabel::wheelEvent(event);
+      return;
+    }
+    // ponytail: wheel zoom, clamp 0.2-4x
+    const double step = event->angleDelta().y() > 0 ? 1.1 : 0.9;
+    _zoom = qBound(0.2, _zoom * step, 4.0);
+    render();
+    event->accept();
+  }
+
+  void Widget::mouseDoubleClickEvent(QMouseEvent *event) {
+    if (!source.isNull() && event->button() == Qt::LeftButton) {
+      _zoom = 1.0;
+      render();
+      event->accept();
+      return;
+    }
+    QLabel::mouseDoubleClickEvent(event);
+  }
+
   void Widget::render() {
     if (source.isNull()) {
       return;
     }
-    setPixmap(source.scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    // ponytail: zoom scales the available size
+    QSize target(int(width() * _zoom), int(height() * _zoom));
+    if (target.width() < 1) target.setWidth(1);
+    if (target.height() < 1) target.setHeight(1);
+    setPixmap(source.scaled(target, Qt::KeepAspectRatio, Qt::SmoothTransformation));
   }
 }
