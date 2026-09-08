@@ -4,6 +4,17 @@
 [![OmniPackage repositories badge aarch64](https://repositories.omnipackage.org/mpz/stable-aarch64/badge.svg)](https://repositories.omnipackage.org/mpz/stable-aarch64/install.html)
 [![Flathub](https://img.shields.io/flathub/v/org.mpz_player.mpz?logo=flathub&label=flathub)](https://flathub.org/apps/org.mpz_player.mpz)
 
+# mpz-janne — the maintainer-approved minimal fork
+
+Minimal fork of [mpz](https://github.com/olegantonyan/mpz): upstream `master` plus only the fixes, nothing else.
+
+- 🔍 **Cover art zoom** — mouse wheel zooms 0.2x–4x in the Album cover dock and pans via scrollbars, double-click resets, right-click → Zoom menu, sensible 300px default size
+- 🛡️ **Bluetooth disconnect survival** — tracks upstream `master`, which handles audio-device loss gracefully instead of the Flatpak 2.1.6 `SIGSEGV`
+
+No nightcore dock, no mascots, no bloat. For the cute full-featured edition, see [mpz-chiyo-chan](https://github.com/Ratkiller446/mpz-chiyo-chan). Fork modifications © Janne Alexander Sebastian Rovio, GPL-3.0-or-later. Upstream docs below 👇
+
+---
+
 # Folder player for big local music collections
 
 ![image](https://raw.githubusercontent.com/olegantonyan/mpz/gh-pages/images/mpz-workflow.apng)
