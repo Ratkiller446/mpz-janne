@@ -18,7 +18,7 @@ namespace CoverArt {
   Widget::Widget(QWidget *parent) : QLabel(parent) {
     setAlignment(Qt::AlignCenter);
     setWordWrap(true);
-    setMinimumSize(80, 80);
+    setMinimumSize(200, 200);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     // muted, small placeholder text (not the cover pixmap)
     setForegroundRole(QPalette::PlaceholderText);
@@ -172,16 +172,15 @@ namespace CoverArt {
   }
 
   QSize Widget::sizeHint() const {
-    if (source.isNull()) return QLabel::sizeHint();
-    // ponytail: hint grows with zoom so dock expands
-    QSize base = source.size();
-    // cap to 600px base, then scale by zoom
-    base = base.scaled(400, 400, Qt::KeepAspectRatio);
-    return QSize(int(base.width() * _zoom), int(base.height() * _zoom));
+    if (source.isNull()) return QSize(300, 300);
+    QSize base = source.size(); // ponytail: 300px base, zoom scales dock
+    base = base.scaled(300, 300, Qt::KeepAspectRatio);
+    int s = int(300 * _zoom);
+    return QSize(s, s);
   }
 
   QSize Widget::minimumSizeHint() const {
-    return QSize(80, 80);
+    return QSize(200, 200);
   }
 
   void Widget::render() {
