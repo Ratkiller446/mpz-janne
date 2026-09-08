@@ -26,6 +26,7 @@
 #include <QFontDatabase>
 #include <QComboBox>
 #include <QAbstractItemView>
+#include <QScrollArea>
 
 #include "settings_ui/settingsdialog.h"
 #ifdef ENABLE_GAPLESS
@@ -475,7 +476,10 @@ void MainWindow::setupDockWidgets() {
   cover_widget = new CoverArt::Widget(this);
   cover_dock = new QDockWidget(tr("Album cover"), this);
   cover_dock->setObjectName("coverArtDock");
-  cover_dock->setWidget(cover_widget);
+  auto *cover_scroll = new QScrollArea(cover_dock);
+  cover_scroll->setWidgetResizable(true);
+  cover_scroll->setWidget(cover_widget);
+  cover_dock->setWidget(cover_scroll);
   addDockWidget(Qt::RightDockWidgetArea, cover_dock);
 
   lyrics_widget = new Lyrics::Widget(global_conf, this);

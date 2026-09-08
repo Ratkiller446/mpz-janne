@@ -21,7 +21,6 @@ namespace CoverArt {
     void trackInfoRequested(const Track &track);
 
   protected:
-    void resizeEvent(QResizeEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;
     QSize sizeHint() const override;

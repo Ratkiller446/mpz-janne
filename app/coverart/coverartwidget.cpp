@@ -12,7 +12,6 @@
 #include <QUrl>
 #include <QFont>
 #include <QPalette>
-#include <QDockWidget>
 
 namespace CoverArt {
   Widget::Widget(QWidget *parent) : QLabel(parent) {
@@ -131,31 +130,14 @@ namespace CoverArt {
     menu.exec(mapToGlobal(pos));
   }
 
-  void Widget::resizeEvent(QResizeEvent *event) {
-    QLabel::resizeEvent(event);
-    if (!source.isNull()) {
-      render();
-    }
-  }
-
   void Widget::wheelEvent(QWheelEvent *event) {
     if (source.isNull()) {
       QLabel::wheelEvent(event);
       return;
     }
-    // ponytail: wheel zoom, clamp 0.2-4x, expand dock
-    const double step = event->angleDelta().y() > 0 ? 1.1 : 0.9;
-    _zoom = qBound(0.2, _zoom * step, 4.0);
+    // ponytail: wheel zoom, clamp 0.2-4x; the QScrollArea in mainwindow shows scrollbars when zoomed
+    _zoom = qBound(0.2, _zoom * (event->angleDelta().y() > 0 ? 1.1 : 0.9), 4.0);
     updateGeometry();
-    // find dock (widget is inside dock)
-    QWidget *p = parentWidget();
-    QDockWidget *dock = qobject_cast<QDockWidget*>(p);
-    if (!dock && p) dock = qobject_cast<QDockWidget*>(p->parentWidget());
-    if (dock) {
-      // expand dock, keep aspect
-      QSize cur = dock->size();
-      dock->resize(int(cur.width() * step), int(cur.height() * step));
-    }
     render();
     event->accept();
   }
@@ -187,7 +169,7 @@ namespace CoverArt {
     if (source.isNull()) {
       return;
     }
-    // ponytail: fit to current widget size (which now grows with zoom via sizeHint)
-    setPixmap(source.scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    const int s = int(300 * _zoom);
+    setPixmap(source.scaled(QSize(s, s), Qt::KeepAspectRatio, Qt::SmoothTransformation));
   }
 }
