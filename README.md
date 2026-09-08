@@ -4,12 +4,12 @@
 [![OmniPackage repositories badge aarch64](https://repositories.omnipackage.org/mpz/stable-aarch64/badge.svg)](https://repositories.omnipackage.org/mpz/stable-aarch64/install.html)
 [![Flathub](https://img.shields.io/flathub/v/org.mpz_player.mpz?logo=flathub&label=flathub)](https://flathub.org/apps/org.mpz_player.mpz)
 
-# mpz-janne — the maintainer-approved minimal fork
+# mpz-janne - the maintainer-approved minimal fork
 
 Minimal fork of [mpz](https://github.com/olegantonyan/mpz): upstream `master` plus only the fixes, nothing else.
 
-- 🔍 **Cover art zoom** — mouse wheel zooms 0.2x–4x in the Album cover dock and pans via scrollbars, double-click resets, right-click → Zoom menu, sensible 300px default size
-- 🛡️ **Bluetooth disconnect survival** — tracks upstream `master`, which handles audio-device loss gracefully instead of the Flatpak 2.1.6 `SIGSEGV`
+- 🔍 **Cover art zoom** - mouse wheel zooms 0.2x-4x in the Album cover dock and pans via scrollbars, double-click resets, right-click → Zoom menu, sensible 300px default size
+- 🛡️ **Bluetooth disconnect survival** - tracks upstream `master`, which handles audio-device loss gracefully instead of the Flatpak 2.1.6 `SIGSEGV`
 
 No nightcore dock, no mascots, no bloat. For the cute full-featured edition, see [mpz-chiyo-chan](https://github.com/Ratkiller446/mpz-chiyo-chan). Fork modifications © Janne Alexander Sebastian Rovio, GPL-3.0-or-later. Upstream docs below 👇
 
@@ -23,7 +23,7 @@ If you like organizing your music in folders, then this player might be for you.
 
 More screenshots here: https://mpz-player.org
 
-This player is an attempt to create the "perfect" player for the author. It doesn't try to be groundbreaking — it just gets the job done. The main feature is the 3-column UI and the way you manage playlists. Choose library folders, middle-click on a folder, and a playlist will be created from it.
+This player is an attempt to create the "perfect" player for the author. It doesn't try to be groundbreaking - it just gets the job done. The main feature is the 3-column UI and the way you manage playlists. Choose library folders, middle-click on a folder, and a playlist will be created from it.
 
 Why "big local collections"? "Local" as opposed to streaming services (which are fine, but this player's goal is playing music you have on your hard drive); "big" means the collection is large enough that managing it becomes hard. Internet radio streaming is also supported.
 
@@ -130,7 +130,7 @@ After dragging `mpz music player.app` to `/Applications`, use either method belo
 xattr -dr com.apple.quarantine "/Applications/mpz music player.app"
 ```
 
-**System Settings:** try to open `mpz music player.app` once and dismiss the warning, then go to *System Settings → Privacy & Security*. Near the bottom you'll see a message that mpz was blocked — click *Open Anyway* and confirm.
+**System Settings:** try to open `mpz music player.app` once and dismiss the warning, then go to *System Settings → Privacy & Security*. Near the bottom you'll see a message that mpz was blocked - click *Open Anyway* and confirm.
 
 The app will then launch normally.
 
@@ -186,7 +186,7 @@ The available config options are:
 
 - `inhibit_sleep_while_playing` in `global.yml` - when `true` the player will prevent your OS from sleeping automatically while playing (on Linux requires `systemd-inhibit`)
 - `stream_buffer_size` in `global.yml` - minimum stream buffer size in bytes. The default is 128KB
-- `single_instance` in `global.yml` - when `true` the player will reuse a single instance — launching another instance with files as command-line arguments will send these files to the running instance as a new playlist
+- `single_instance` in `global.yml` - when `true` the player will reuse a single instance - launching another instance with files as command-line arguments will send these files to the running instance as a new playlist
 - `playback_log_size` in `global.yml` - max size of playback log, default is 100
 - `columns_config` in `global.yml` - configure columns in the playlist section, more on this below
 - `show_playlist_headers` in `global.yml` - when `true` the playlist shows column headers. Default is `false`
