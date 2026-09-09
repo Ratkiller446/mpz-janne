@@ -69,7 +69,6 @@ namespace CoverArt {
     if (path.isEmpty() || cover.isNull()) {
       _cover_path.clear();
       source = QPixmap();
-      _zoom = 1.0;
       // request() may not have run yet, so ask rather than assume.
       const bool searching = Online::Downloader::instance().isSearching(_track.artist(), _track.album());
       setText(searching ? tr("Searching cover art...") : tr("No cover art"));
@@ -77,7 +76,6 @@ namespace CoverArt {
     }
     _cover_path = path;
     source = cover;
-    _zoom = 1.0;
     render();
   }
 
