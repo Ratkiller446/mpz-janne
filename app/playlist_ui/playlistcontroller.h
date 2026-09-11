@@ -12,6 +12,7 @@
 #include "playlist_ui/columnsconfig.h"
 #include "tracksmimedata.h"
 
+#include <QElapsedTimer>
 #include <QObject>
 #include <QTableView>
 #include <memory>
@@ -76,6 +77,7 @@ namespace PlaylistUi {
     ColumnsConfig columns_config;
     quint64 live_stream_uid = 0;
     bool restoring_cursor = false;
+    QElapsedTimer activationStamp_;
 
     QString dirsLabel(const QList<QDir> &dirs) const;
     void updateStreamSpans();

@@ -2,7 +2,7 @@ name: tests
 
 on:
   push:
-    branches: [master]
+    branches: [master, ponytail-fixes, janne-minimal]
     paths-ignore:
       - README.md
       - CHANGELOG.md

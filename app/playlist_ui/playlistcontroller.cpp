@@ -64,8 +64,15 @@ namespace PlaylistUi {
 
     view->viewport()->installEventFilter(this);
     view->installEventFilter(this);
+    if (view->window()) {
+      view->window()->installEventFilter(this);
+    }
 
     connect(view, &QTableView::activated, this, [=](const QModelIndex &index) {
+      if (activationStamp_.isValid() && activationStamp_.elapsed() < 400) {
+        activationStamp_.invalidate();
+        return;
+      }
       emit activated(proxy->activeModel()->itemAt(proxy->mapToSource(index)));
     });
 
@@ -255,6 +262,9 @@ namespace PlaylistUi {
   }
 
   bool Controller::eventFilter(QObject *obj, QEvent *event) {
+    if (obj == view->window() && event->type() == QEvent::WindowActivate) {
+      activationStamp_.start();
+    }
     if (obj == view->viewport()) {
       if (handleDnd(event)) {
         return true;
