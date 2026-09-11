@@ -49,11 +49,18 @@ void TestSortPresets::cleanupTestCase() {
 }
 
 Track TestSortPresets::make(const QString &name, quint16 tracknum, quint16 year) {
+  // Side effects must stay out of Q_ASSERT: in Release builds asserts vanish
+  // and the fixture files would silently never exist (DIRECTORY sorting needs
+  // real paths to order anything).
   const QString subdir = dir.filePath(name);
-  Q_ASSERT(QDir().mkpath(subdir));
+  const bool made = QDir().mkpath(subdir);
+  Q_ASSERT(made);
+  Q_UNUSED(made);
   const QString path = subdir + "/" + name + ".mp3";
   QFile f(path);
-  Q_ASSERT(f.open(QIODevice::WriteOnly));
+  const bool opened = f.open(QIODevice::WriteOnly);
+  Q_ASSERT(opened);
+  Q_UNUSED(opened);
   f.write("x");
   f.close();
 
